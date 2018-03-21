@@ -10,7 +10,7 @@ class BarcodeHandler : IHttpHandler
 {
     public void ProcessRequest(HttpContext context)
     {
-        System.Diagnostics.Debugger.Break();
+        
         var urlContent = context.Request.QueryString["val1"];
         var dmImage = finalDM(urlContent);
         context.Response.ContentType = "image/png";

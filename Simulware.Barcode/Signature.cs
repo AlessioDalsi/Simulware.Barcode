@@ -12,11 +12,13 @@ namespace Simulware.Barcode
             byte[] ret = null;
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             store.Open(OpenFlags.ReadOnly);
+            System.Diagnostics.Debugger.Break();
             RSA provider = null;
             foreach (X509Certificate2 crt in store.Certificates)
             {
 
-                string sn = "‎‎009B780F587F3C3543";
+                string sn = "009B780F587F3C3543";
+                
                 if (crt.SerialNumber == sn)
                 {
                     provider = (RSA)crt.PrivateKey;
