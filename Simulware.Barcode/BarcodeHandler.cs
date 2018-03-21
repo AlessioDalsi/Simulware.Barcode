@@ -45,7 +45,7 @@ class BarcodeHandler : IHttpHandler
     public Bitmap finalDM(string data)
     {
         Signature s = new Signature();
-        string hexString = "";
+        string hexString = "Test";
         try
         {
             var sign = s.CreateSignature(data);
