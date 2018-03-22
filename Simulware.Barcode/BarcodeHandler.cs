@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Dapper;
+using Simulware.Barcode;
+using System;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Text;
 using System.Web;
-using Simulware.Barcode;
 
 class BarcodeHandler : IHttpHandler
 {
     public void ProcessRequest(HttpContext context)
     {
-        
-        var urlContent = context.Request.QueryString["val1"];
+        string urlContent = context.Request.QueryString["val1"];
+        TestDbWrite(urlContent);
         var dmImage = FinalDm(urlContent);
         context.Response.ContentType = "image/png";
         dmImage.Save(context.Response.OutputStream, ImageFormat.Png);
@@ -42,5 +43,19 @@ class BarcodeHandler : IHttpHandler
         }
         Simulware.Barcode.DataMatrix dm = new Simulware.Barcode.DataMatrix();
         return dm.GenMatrix(hexString);
+    }
+
+    public void TestDbWrite(string urlContent)
+    {
+
+        string Nome = urlContent;
+        using (var connection=new SqlConnection(@"Data Source=WIN-53OQL7NNTP1\SQLEXPRESS;Initial Catalog=Datamatrix;User ID=test;Password=HttpHandlerSimulware1"))
+        {
+            connection.Open();
+
+            connection.Execute(@"
+                    INSERT INTO dbo.Data (Nome)
+                    VALUES (@Nome)",Nome);
+        }
     }
 }
