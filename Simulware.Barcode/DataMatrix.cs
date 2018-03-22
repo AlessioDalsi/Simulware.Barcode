@@ -5,7 +5,7 @@ namespace Simulware.Barcode
 {
     public class DataMatrix
     {
-        public Bitmap genMatrix(string Value)
+        public Bitmap GenMatrix(string value)
         {
             DmtxImageEncoderOptions options = new DmtxImageEncoderOptions
             {
@@ -13,7 +13,7 @@ namespace Simulware.Barcode
                 MarginSize = 4,
                 SizeIdx = DmtxSymbolSize.DmtxSymbol52x52
             };
-            return new DmtxImageEncoder().EncodeImage(Value, options);
+            return new DmtxImageEncoder().EncodeImage(value, options);
             //new DmtxImageEncoder().EncodeImage(Value, options).Save("DataMatrix.png");
         }
     }

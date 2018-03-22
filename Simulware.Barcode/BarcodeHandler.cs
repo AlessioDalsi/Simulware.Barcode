@@ -12,14 +12,14 @@ class BarcodeHandler : IHttpHandler
     {
         
         var urlContent = context.Request.QueryString["val1"];
-        var dmImage = finalDM(urlContent);
+        var dmImage = FinalDm(urlContent);
         context.Response.ContentType = "image/png";
         dmImage.Save(context.Response.OutputStream, ImageFormat.Png);
     }
 
     public bool IsReusable { get; }
 
-    public Bitmap finalDM(string data)
+    public Bitmap FinalDm(string data)
     {
         Signature s = new Signature();
         string hexString = "Test";
@@ -41,6 +41,6 @@ class BarcodeHandler : IHttpHandler
             Console.WriteLine("Exception: " + e.ToString());
         }
         Simulware.Barcode.DataMatrix dm = new Simulware.Barcode.DataMatrix();
-        return dm.genMatrix(hexString);
+        return dm.GenMatrix(hexString);
     }
 }
