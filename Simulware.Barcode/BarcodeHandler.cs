@@ -15,29 +15,6 @@ class BarcodeHandler : IHttpHandler
         var dmImage = finalDM(urlContent);
         context.Response.ContentType = "image/png";
         dmImage.Save(context.Response.OutputStream, ImageFormat.Png);
-        //context.Response.Write(urlContent);
-        /*int width = 52;
-
-        int height = 52;
-
-        Bitmap bitmap = finalDM(urlContent);
-
-        Graphics g = Graphics.FromImage((Image)bitmap);
-
-        MemoryStream mem = new MemoryStream();
-
-        bitmap.Save(mem, ImageFormat.Png);
-
-        byte[] buffer = mem.ToArray();
-
-        context.Response.ContentType = "image/png";
-
-        context.Response.BinaryWrite(buffer);
-
-        context.Response.Flush();*/
-        //var dmImage = finalDM(context.Request.InputStream.ToString());
-        //context.Response.ContentType = "image/png";
-        //dmImage.Save(context.Response.OutputStream, ImageFormat.Png);
     }
 
     public bool IsReusable { get; }
