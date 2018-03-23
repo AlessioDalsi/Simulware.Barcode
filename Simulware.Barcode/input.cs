@@ -9,7 +9,8 @@ namespace Simulware.Barcode
 {
     public class Input
     {
-        string cs = @"Data Source=WIN-53OQL7NNTP1\SQLEXPRESS;Initial Catalog=Datamatrix;User ID=test;Password=HttpHandlerSimulware1"
+        private string cs =
+            @"Data Source=WIN-53OQL7NNTP1\SQLEXPRESS;Initial Catalog=Datamatrix;User ID=test;Password=HttpHandlerSimulware1";
         public void WriteOnDb(int tipo, int idUser, int idClasse, string label)
         {
             using (SqlConnection connection = new SqlConnection(cs))
