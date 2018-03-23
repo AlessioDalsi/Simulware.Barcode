@@ -1,5 +1,4 @@
-﻿using Dapper;
-using Simulware.Barcode;
+﻿using Simulware.Barcode;
 using System;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -11,11 +10,16 @@ class BarcodeHandler : IHttpHandler
 {
     public void ProcessRequest(HttpContext context)
     {
-        string urlContent = context.Request.QueryString["val1"];
-        TestDbWrite(urlContent);
-        var dmImage = FinalDm(urlContent);
+        string tipo = context.Request.QueryString["Tipo"];
+        string idUser = context.Request.QueryString["Id_User"];
+        string idClasse = context.Request.QueryString["Id_Classe"];
+        string label = context.Request.QueryString["Label"];
+
+        var data = new Input();
+        data.WriteOnDb(Convert.ToInt32(tipo), Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label);
+        /*var dmImage = FinalDm(urlContent);
         context.Response.ContentType = "image/png";
-        dmImage.Save(context.Response.OutputStream, ImageFormat.Png);
+        dmImage.Save(context.Response.OutputStream, ImageFormat.Png);*/
     }
 
     public bool IsReusable { get; }
@@ -26,7 +30,7 @@ class BarcodeHandler : IHttpHandler
         string hexString = "Test";
         try
         {
-            var sign = s.CreateSignature(data);
+            byte[] sign = s.CreateSignature(data);
             StringBuilder sb = new StringBuilder();
             foreach (byte b in sign)
             {
@@ -44,24 +48,5 @@ class BarcodeHandler : IHttpHandler
         Simulware.Barcode.DataMatrix dm = new Simulware.Barcode.DataMatrix();
         return dm.GenMatrix(hexString);
     }
-
-    public void TestDbWrite(string urlContent)
-    {
-
-        string Nome = urlContent;
-        if (urlContent == null) Nome = null;
-
-        using (var connection=new SqlConnection(@"Data Source=WIN-53OQL7NNTP1\SQLEXPRESS;Initial Catalog=Datamatrix;User ID=test;Password=HttpHandlerSimulware1"))
-        {
-            string qry = "INSERT INTO dbo.Data (Nome) VALUES (@Nome)";
-            SqlCommand com = new SqlCommand(qry, connection);
-            com.Parameters.AddWithValue("@Nome", Nome);
-
-            connection.Open();
-            com.ExecuteNonQuery();
-            connection.Close();
-
-            //INSERT INTO dbo.Data (Nome) VALUES (@Nome)
-        }
-    }
+    
 }
