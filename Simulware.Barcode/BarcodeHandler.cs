@@ -49,13 +49,19 @@ class BarcodeHandler : IHttpHandler
     {
 
         string Nome = urlContent;
+        if (urlContent == null) Nome = null;
+
         using (var connection=new SqlConnection(@"Data Source=WIN-53OQL7NNTP1\SQLEXPRESS;Initial Catalog=Datamatrix;User ID=test;Password=HttpHandlerSimulware1"))
         {
-            connection.Open();
+            string qry = "INSERT INTO dbo.Data (Nome) VALUES (@Nome)";
+            SqlCommand com = new SqlCommand(qry, connection);
+            com.Parameters.AddWithValue("@Nome", Nome);
 
-            connection.Execute(@"
-                    INSERT INTO dbo.Data (Nome)
-                    VALUES (@Nome)",Nome);
+            connection.Open();
+            com.ExecuteNonQuery();
+            connection.Close();
+
+            //INSERT INTO dbo.Data (Nome) VALUES (@Nome)
         }
     }
 }
