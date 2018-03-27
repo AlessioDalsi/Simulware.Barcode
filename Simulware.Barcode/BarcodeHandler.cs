@@ -1,22 +1,38 @@
 ﻿using Simulware.Barcode;
 using System;
-using System.Data.SqlClient;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
 
 class BarcodeHandler : IHttpHandler
 {
     public void ProcessRequest(HttpContext context)
     {
-        string tipo = context.Request.QueryString["Tipo"];
-        string idUser = context.Request.QueryString["Id_User"];
-        string idClasse = context.Request.QueryString["Id_Classe"];
-        string label = context.Request.QueryString["Label"];
+        var data = new DBComm();
+        JsonSerializer serializer = new JsonSerializer();
+        string requestName = context.Request.Url.LocalPath;
+        if (requestName == "/Barcode/newSerial")
+        {
+            string tipo = context.Request.QueryString["Tipo"];
+            string idUser = context.Request.QueryString["IdUser"];
+            string idClasse = context.Request.QueryString["IdClasse"];
+            string label = context.Request.QueryString["Label"];
+            
+            data.WriteOnDb(tipo, Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label);
+            var jsoncontent = new
+            { Serial = data.ReadFromDb(tipo, Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label) };
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "application/json";
+            context.Response.Write(JsonConvert.SerializeObject(jsoncontent));
+        }
+        else if (requestName == "/Barcode/GetDM")
+        {
+            string serial = context.Request.QueryString["Serial"];
 
-        var data = new Input();
-        data.WriteOnDb(Convert.ToInt32(tipo), Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label);
+            context.Response.Write(data.ReadFromDb(Convert.ToInt32(serial)));
+        }
+
         /*var dmImage = FinalDm(urlContent);
         context.Response.ContentType = "image/png";
         dmImage.Save(context.Response.OutputStream, ImageFormat.Png);*/
@@ -48,5 +64,5 @@ class BarcodeHandler : IHttpHandler
         Simulware.Barcode.DataMatrix dm = new Simulware.Barcode.DataMatrix();
         return dm.GenMatrix(hexString);
     }
-    
+
 }
