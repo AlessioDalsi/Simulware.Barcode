@@ -59,7 +59,7 @@ namespace Simulware.Barcode
             }
         }
 
-        public string ReadFromDb(int serial)
+        public Tuple<string, int, int, int, int, string> ReadFromDb(int serial)
         {
             using (SqlConnection connection = new SqlConnection(_cs))
             {
@@ -71,20 +71,24 @@ namespace Simulware.Barcode
                 com.Connection = connection;
                 connection.Open();
                 var reader = com.ExecuteReader();
-                string id="", label="", idCorso="", idClasse="", timestamp="", seriale="", tipo="", result;
+                string label = "", tipo = "";
+                int idCorso = 0, idClasse = 0, seriale = 0;
+                DateTime timestamp=new DateTime();
+                Int32 date;
                 while (reader.Read())
                 {
-                    id = reader["Id"].ToString();
                     label = reader["Label"].ToString();
-                    idCorso = reader["ID_corso"].ToString();
-                    idClasse = reader["ID_user"].ToString();
-                    timestamp = reader["Timestamp"].ToString();
-                    seriale = reader["Serial"].ToString();
+                    idCorso = Convert.ToInt32(reader["ID_corso"]);
+                    idClasse = Convert.ToInt32(reader["ID_user"].ToString());
+                    timestamp = Convert.ToDateTime(reader["Timestamp"]);
+                    seriale = Convert.ToInt32(reader["Serial"].ToString());
                     tipo = reader["Tipo"].ToString();
                 }
+
+                date = (Int32)timestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
                 reader.Close();
                 connection.Close();
-                return result = id + " " + label + " " + idCorso + " " + idClasse + " " + timestamp + " " + seriale + " " + tipo;
+                return new Tuple<string, int, int, int, int, string>(label, idCorso, idClasse, date, seriale, tipo);
             }
         }
     }

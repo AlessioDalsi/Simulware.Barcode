@@ -11,7 +11,7 @@ namespace Simulware.Barcode
             {
                 ModuleSize = 1,
                 MarginSize = 4,
-                SizeIdx = DmtxSymbolSize.DmtxSymbol52x52
+                SizeIdx = DmtxSymbolSize.DmtxSymbol64x64
             };
             return new DmtxImageEncoder().EncodeImage(value, options);
             //new DmtxImageEncoder().EncodeImage(Value, options).Save("DataMatrix.png");

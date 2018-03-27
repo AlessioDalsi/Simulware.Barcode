@@ -7,7 +7,7 @@ namespace Simulware.Barcode
 {
     public class Signature
     {
-        public byte[] CreateSignature(string data)
+        public byte[] CreateSignature(byte[] data)
         {
             byte[] ret = null;
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
@@ -30,7 +30,7 @@ namespace Simulware.Barcode
             }
 
             SHA1Managed sha1 = new SHA1Managed();
-            byte[] bytes = new UnicodeEncoding().GetBytes(data);
+            byte[] bytes = data;
             byte[] hash = sha1.ComputeHash(bytes);
             ret = provider.SignHash(hash, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
             return ret;
