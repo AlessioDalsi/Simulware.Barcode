@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text;
+using System.Configuration;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -16,7 +16,7 @@ namespace Simulware.Barcode
             RSA provider = null;
             foreach (X509Certificate2 crt in store.Certificates)
             {
-                const string sn = "009B780F587F3C3543";
+                string sn = ConfigurationManager.AppSettings["SerialNumberCert"];
                 if (crt.SerialNumber == sn)
                 {
                     provider = (RSA)crt.PrivateKey;

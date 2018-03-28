@@ -14,7 +14,7 @@ class BarcodeHandler : IHttpHandler
     {
         try
         {
-            System.Diagnostics.Debugger.Launch();
+            //System.Diagnostics.Debugger.Launch();
             int test = Convert.ToInt32(ConfigurationManager.AppSettings["ModuleSize"]);
             var data = new DBComm();
             JsonSerializer serializer = new JsonSerializer();
