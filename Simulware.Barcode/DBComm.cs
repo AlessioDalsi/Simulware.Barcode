@@ -37,7 +37,7 @@ namespace Simulware.Barcode
         {
             using (SqlConnection connection = new SqlConnection(_cs))
             {
-                string query = "SELECT D.Serial FROM dbo.Data D INNER JOIN dbo.SerialType S ON D.Tipo = S.Id Label=@label";
+                string query = "SELECT D.Serial FROM dbo.Data D INNER JOIN dbo.SerialType S ON D.Tipo = S.Id WHERE Label=@label";
                 SqlCommand com = new SqlCommand();
                 com.Parameters.AddWithValue("@label", label);
                 com.CommandText = query;
@@ -74,7 +74,6 @@ namespace Simulware.Barcode
                 string label = "", tipo = "";
                 int idCorso = 0, idClasse = 0, seriale = 0;
                 DateTime timestamp=new DateTime();
-                Int32 date;
                 while (reader.Read())
                 {
                     label = reader["Label"].ToString();
@@ -85,7 +84,7 @@ namespace Simulware.Barcode
                     tipo = reader["Nome"].ToString();
                 }
 
-                date = (Int32)timestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+                var date = (int)timestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
                 reader.Close();
                 connection.Close();
                 return new Tuple<string, int, int, int, int, string>(label, idCorso, idClasse, date, seriale, tipo);

@@ -15,6 +15,7 @@ class BarcodeHandler : IHttpHandler
     {
         try
         {
+            System.Diagnostics.Debugger.Break();
             var data = new DBComm();
             JsonSerializer serializer = new JsonSerializer();
             string requestName = context.Request.Url.LocalPath;
@@ -40,25 +41,29 @@ class BarcodeHandler : IHttpHandler
 
                 case "/Barcode/GetDM":
                     string serial = context.Request.QueryString["Serial"];
-                    var Row = data.ReadFromDb(Convert.ToInt32(serial));
-                    byte[] labelBytes = Encoding.BigEndianUnicode.GetBytes(Row.Item1.PadRight(150));
-                    byte[] corsoBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(Row.Item2));
-                    byte[] userBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(Row.Item3));
-                    byte[] timeBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(Row.Item4));
-                    byte[] serialBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(Row.Item5));
-                    byte[] typeBytes = Encoding.BigEndianUnicode.GetBytes(Row.Item6.PadRight(150));
+                    string encoding = context.Request.QueryString["Encoding"];
+                    var row = data.ReadFromDb(Convert.ToInt32(serial));
+                    byte[] labelBytes;
+                    if (encoding == "UTF8")
+                    {
+                        labelBytes = Encoding.ASCII.GetBytes(row.Item1.PadRight(150));
+                    }
+                    else
+                    {
+                        labelBytes = Encoding.BigEndianUnicode.GetBytes(row.Item1.PadRight(150));
+                    }
+
+                    byte[] corsoBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(row.Item2));
+                    byte[] userBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(row.Item3));
+                    byte[] timeBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(row.Item4));
+                    byte[] serialBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(row.Item5));
+                    byte[] typeBytes = Encoding.BigEndianUnicode.GetBytes(row.Item6.PadRight(150));
 
                     byte[] content = MergeArrays(labelBytes, corsoBytes, userBytes, timeBytes, serialBytes, typeBytes);
 
                     var dmImage = FinalDm(content);
                     context.Response.ContentType = "image/png";
                     dmImage.Save(context.Response.OutputStream, ImageFormat.Png);
-                    ////per le stringhe
-                    //Encoding.UTF8.GetBytes()
-                    ////per gli int
-                    //BitConverter.GetBytes()
-                    ////trasformazione in big endian
-                    //IPAddress.HostToNetworkOrder()
                     context.Response.Write(content);
                     break;
 
@@ -79,11 +84,11 @@ class BarcodeHandler : IHttpHandler
                     break;
 
                 default:
-                    if (requestName != "/Barcode/GetDM" || requestName != "/Barcode/GetDM" || requestName!="/Barcode/ReportData")
+                    if (requestName != "/Barcode/GetDM" || requestName != "/Barcode/GetDM" || requestName != "/Barcode/ReportData")
                     {
                         context.Response.Write("Errore metodi richiamabili: <br>");
                         context.Response.Write("newSerial?Tipo=stringa&IdUser=intero&IdClasse=intero&Label=stringa <br>");
-                        context.Response.Write("GetDM?Serial=intero <br>");
+                        context.Response.Write("GetDM?Serial=intero&Encoding=stringa(es. UTF8) <br>");
                         context.Response.Write("/Barcode/ReportData?Serial=intero");
                     }
 
@@ -92,7 +97,7 @@ class BarcodeHandler : IHttpHandler
         }
         catch (Exception)
         {
-            context.Response.Write("Errore: " + context.Response.StatusCode);
+            context.Response.Write("Qualcose è andato storto, Codice: " + context.Response.StatusCode);
         }
 
     }
