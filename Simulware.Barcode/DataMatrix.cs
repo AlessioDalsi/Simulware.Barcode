@@ -29,7 +29,7 @@ namespace Simulware.Barcode
                     break;
             }
             return new DmtxImageEncoder().EncodeImage(value, options);
-            //new DmtxImageEncoder().EncodeImage(Value, options).Save("DataMatrix.png");
+            //new DmtxImageEncoder().EncodeImage(Value, options).Save("DataMatrix.png");        //salva un file png nella cartella
         }
     }
 }
