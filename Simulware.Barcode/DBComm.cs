@@ -37,7 +37,7 @@ namespace Simulware.Barcode
         {
             using (SqlConnection connection = new SqlConnection(_cs))
             {
-                string query = "SELECT Serial FROM dbo.Data WHERE Label=@label";
+                string query = "SELECT D.Serial FROM dbo.Data D INNER JOIN dbo.SerialType S ON D.Tipo = S.Id Label=@label";
                 SqlCommand com = new SqlCommand();
                 com.Parameters.AddWithValue("@label", label);
                 com.CommandText = query;
@@ -63,7 +63,7 @@ namespace Simulware.Barcode
         {
             using (SqlConnection connection = new SqlConnection(_cs))
             {
-                string query = "SELECT * FROM dbo.Data WHERE Serial=@serial";
+                string query = "SELECT D.Label, D.ID_corso, D.ID_user, D.Timestamp, D.Serial, S.Nome FROM dbo.Data D INNER JOIN dbo.SerialType S ON D.Tipo = S.Id WHERE Serial = @serial";
                 SqlCommand com = new SqlCommand();
                 com.Parameters.AddWithValue("@serial", serial);
                 com.CommandText = query;
@@ -82,7 +82,7 @@ namespace Simulware.Barcode
                     idClasse = Convert.ToInt32(reader["ID_user"].ToString());
                     timestamp = Convert.ToDateTime(reader["Timestamp"]);
                     seriale = Convert.ToInt32(reader["Serial"].ToString());
-                    tipo = reader["Tipo"].ToString();
+                    tipo = reader["Nome"].ToString();
                 }
 
                 date = (Int32)timestamp.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
