@@ -15,7 +15,7 @@ class BarcodeHandler : IHttpHandler
     {
         try
         {
-            System.Diagnostics.Debugger.Break();
+            System.Diagnostics.Debugger.Launch();
             var data = new DBComm();
             JsonSerializer serializer = new JsonSerializer();
             string requestName = context.Request.Url.LocalPath;
@@ -44,7 +44,7 @@ class BarcodeHandler : IHttpHandler
                     string encoding = context.Request.QueryString["Encoding"];
                     var row = data.ReadFromDb(Convert.ToInt32(serial));
                     byte[] labelBytes;
-                    if (encoding == "UTF8")
+                    if (encoding == "ASCII")
                     {
                         labelBytes = Encoding.ASCII.GetBytes(row.Item1.PadRight(150));
                     }
@@ -86,9 +86,10 @@ class BarcodeHandler : IHttpHandler
                 default:
                     if (requestName != "/Barcode/GetDM" || requestName != "/Barcode/GetDM" || requestName != "/Barcode/ReportData")
                     {
-                        context.Response.Write("Errore metodi richiamabili: <br>");
-                        context.Response.Write("newSerial?Tipo=stringa&IdUser=intero&IdClasse=intero&Label=stringa <br>");
-                        context.Response.Write("GetDM?Serial=intero&Encoding=stringa(es. UTF8) <br>");
+                        context.Response.StatusCode = 500;
+                        context.Response.Write("Errore, metodi richiamabili: <br>");
+                        context.Response.Write("/Barcode/newSerial?Tipo=stringa(nome del tipo)&IdUser=intero&IdClasse=intero&Label=stringa <br>");
+                        context.Response.Write("/Barcode/GetDM?Serial=intero&Encoding=stringa(es. UTF8) <br>");
                         context.Response.Write("/Barcode/ReportData?Serial=intero");
                     }
 
@@ -97,6 +98,7 @@ class BarcodeHandler : IHttpHandler
         }
         catch (Exception)
         {
+            context.Response.StatusCode = 500;
             context.Response.Write("Qualcose è andato storto, Codice: " + context.Response.StatusCode);
         }
 

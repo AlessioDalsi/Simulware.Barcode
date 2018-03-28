@@ -10,7 +10,7 @@ namespace Simulware.Barcode
             DmtxImageEncoderOptions options = new DmtxImageEncoderOptions
             {
                 ModuleSize = 1,
-                MarginSize = 8,
+                MarginSize = 12,
                 SizeIdx = DmtxSymbolSize.DmtxSymbol64x64
             };
             return new DmtxImageEncoder().EncodeImage(value, options);
