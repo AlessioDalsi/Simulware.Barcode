@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Simulware.Barcode
 {
     public class DBComm
     {
-        private string _cs = @"Data Source=WIN-53OQL7NNTP1\SQLEXPRESS;Initial Catalog=Datamatrix;User ID=test;Password=HttpHandlerSimulware1";
+        
+        private readonly string _cs = ConfigurationManager.ConnectionStrings["Connection"].ConnectionString;
 
         public void WriteOnDb(string tipo, int idUser, int idClasse, string label)
         {

@@ -1,13 +1,12 @@
-﻿using Simulware.Barcode;
+﻿using Newtonsoft.Json;
+using Simulware.Barcode;
 using System;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
-using System.Net.Http;
-using System.Reflection.Emit;
 using System.Text;
 using System.Web;
-using Newtonsoft.Json;
 
 class BarcodeHandler : IHttpHandler
 {
@@ -16,6 +15,7 @@ class BarcodeHandler : IHttpHandler
         try
         {
             System.Diagnostics.Debugger.Launch();
+            int test = Convert.ToInt32(ConfigurationManager.AppSettings["ModuleSize"]);
             var data = new DBComm();
             JsonSerializer serializer = new JsonSerializer();
             string requestName = context.Request.Url.LocalPath;

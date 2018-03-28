@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Configuration;
+using System.Drawing;
 using DataMatrix.net;
 
 namespace Simulware.Barcode
@@ -9,8 +11,8 @@ namespace Simulware.Barcode
         {
             DmtxImageEncoderOptions options = new DmtxImageEncoderOptions
             {
-                ModuleSize = 1,
-                MarginSize = 12,
+                ModuleSize = Convert.ToInt32(ConfigurationManager.AppSettings["ModuleSize"]),
+                MarginSize = Convert.ToInt32(ConfigurationManager.AppSettings["MarginSize"]),
                 SizeIdx = DmtxSymbolSize.DmtxSymbol64x64
             };
             return new DmtxImageEncoder().EncodeImage(value, options);
