@@ -13,7 +13,7 @@ namespace Simulware.Barcode
             DmtxImageEncoderOptions options = new DmtxImageEncoderOptions
             {
                 ModuleSize = Convert.ToInt32(ConfigurationManager.AppSettings["ModuleSize"]),
-                MarginSize = Convert.ToInt32(ConfigurationManager.AppSettings["MarginSize"]),
+                MarginSize = Convert.ToInt32(ConfigurationManager.AppSettings["MarginSize"])
 
             };
             switch (ConfigurationManager.AppSettings["DMdim"])

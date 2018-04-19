@@ -7,7 +7,7 @@ namespace Simulware.Barcode
 {
     public class DBComm
     {
-        
+
         private readonly string _cs = ConfigurationManager.ConnectionStrings["Connection"].ConnectionString;
 
         public void WriteOnDb(string tipo, int idUser, int idClasse, string label)
@@ -30,29 +30,31 @@ namespace Simulware.Barcode
             }
         }
 
-        public int ReadFromDb(string tipo, int idUser, int idClasse, string label)
+        public Tuple<int, string> ReadFromDb(string tipo, int idUser, int idClasse, string label)
         {
             using (SqlConnection connection = new SqlConnection(_cs))
             {
-                string query = "SELECT D.Serial FROM dbo.Data D INNER JOIN dbo.SerialType S ON D.Tipo = S.Id WHERE Label=@label";
+                string query = "SELECT D.Serial, S.Formato FROM dbo.Data D INNER JOIN dbo.SerialType S ON D.Tipo = S.Id WHERE Label=@label";
                 SqlCommand com = new SqlCommand();
                 com.Parameters.AddWithValue("@label", label);
                 com.CommandText = query;
                 com.CommandType = CommandType.Text;
-                int result = 0;
                 com.Connection = connection;
                 connection.Open();
+                int Serial = 0;
+                string Formato = "";
                 var reader = com.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        result = reader.GetInt32(0);
+                        Serial = Convert.ToInt32(reader["Serial"]);
+                        Formato = reader["Formato"].ToString();
                     }
                 }
                 reader.Close();
                 connection.Close();
-                return result;
+                return new Tuple<int, string>(Serial, Formato);
             }
         }
 
@@ -70,7 +72,7 @@ namespace Simulware.Barcode
                 var reader = com.ExecuteReader();
                 string label = "", tipo = "";
                 int idCorso = 0, idClasse = 0, seriale = 0;
-                DateTime timestamp=new DateTime();
+                DateTime timestamp = new DateTime();
                 while (reader.Read())
                 {
                     label = reader["Label"].ToString();

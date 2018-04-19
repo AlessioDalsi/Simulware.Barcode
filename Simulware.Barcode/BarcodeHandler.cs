@@ -14,7 +14,7 @@ class BarcodeHandler : IHttpHandler
     {
         try
         {
-            //System.Diagnostics.Debugger.Launch();
+            System.Diagnostics.Debugger.Launch();
             int test = Convert.ToInt32(ConfigurationManager.AppSettings["ModuleSize"]);
             var data = new DBComm();
             JsonSerializer serializer = new JsonSerializer();
@@ -28,11 +28,13 @@ class BarcodeHandler : IHttpHandler
                     string label = context.Request.QueryString["Label"];
 
                     data.WriteOnDb(tipo, Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label);
+                    var queryResult = data.ReadFromDb(tipo, Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label);
                     var jsoncontent = new
                     {
                         StatusCode = context.Response.StatusCode,
                         StatusMessage = "OK",
-                        Serial = data.ReadFromDb(tipo, Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label)
+                        Serial = queryResult.Item1,
+                        Formato = queryResult.Item2
                     };
                     context.Response.StatusCode = 200;
                     context.Response.ContentType = "application/json";
