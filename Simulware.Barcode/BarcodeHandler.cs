@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Simulware.Barcode;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 class BarcodeHandler : IHttpHandler
@@ -29,12 +31,12 @@ class BarcodeHandler : IHttpHandler
 
                     data.WriteOnDb(tipo, Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label);
                     var queryResult = data.ReadFromDb(tipo, Convert.ToInt32(idUser), Convert.ToInt32(idClasse), label);
+                    string composedSerial = ComposeSerial(queryResult, tipo);
                     var jsoncontent = new
                     {
                         StatusCode = context.Response.StatusCode,
                         StatusMessage = "OK",
-                        Serial = queryResult.Item1,
-                        Formato = queryResult.Item2
+                        Serial = composedSerial
                     };
                     context.Response.StatusCode = 200;
                     context.Response.ContentType = "application/json";
@@ -106,6 +108,7 @@ class BarcodeHandler : IHttpHandler
 
     }
 
+
     public bool IsReusable { get; }
 
     public byte[] MergeArrays(byte[] array1, byte[] array2, byte[] array3, byte[] array4, byte[] array5, byte[] array6)
@@ -144,5 +147,44 @@ class BarcodeHandler : IHttpHandler
         Simulware.Barcode.DataMatrix dm = new Simulware.Barcode.DataMatrix();
         return dm.GenMatrix(hexString);
     }
+
+    public string ComposeSerial(Tuple<int, string> queryResult, string tipo)
+    {
+        string serial = "";
+        string input = queryResult.Item2;
+        string pattern = @"\<([^>]*)\>";
+        List<string> components = new List<string>();
+
+        Match m = Regex.Match(input, pattern);
+        components.Add(m.Groups[1].ToString());
+        while (m.Success)
+        {
+            m = m.NextMatch();
+            components.Add(m.Groups[1].ToString());
+        }
+        //string testFormato = Regex.Match(queryResult.Item2, @"\<([^>]*)\>").Groups[1].Value;
+        for (int i = 0; i < components.Count; i++)
+        {
+            switch (components[i])
+            {
+                case "ser":
+                    serial = serial + queryResult.Item1.ToString();
+                    break;
+                case "yy":
+                    serial = serial + DateTime.Now.Year;
+                    break;
+                case "nomeTipo":
+                    serial = serial + tipo;
+                    break;
+            }
+
+            if (i < components.Count - 2 && components[i] != "")
+            {
+                serial = serial + "/";
+            }
+        }
+        return serial;
+    }
+
 
 }
